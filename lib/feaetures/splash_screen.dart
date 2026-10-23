@@ -1,7 +1,5 @@
-import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:food_app/core/app_theme.dart';
-import 'package:food_app/core/design/app_spacing.dart';
 import 'package:food_app/provider/auth_provider.dart';
 import 'package:food_app/provider/location_provider.dart';
 import 'package:provider/provider.dart';
@@ -84,26 +82,13 @@ class _SplashScreenState extends State<SplashScreen> {
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              Container(
-                padding: const EdgeInsets.all(AppSpacing.xxl),
-                decoration: BoxDecoration(
-                  color: AppColors.white,
-                  shape: BoxShape.circle,
-                  boxShadow: const [
-                    AppShadows.softShadow,
-                  ],
-                ),
-                child: Icon(
-                  Icons.restaurant_rounded,
-                  size: 72,
-                  color: AppColors.primary,
-                ),
-              ),
-              const SizedBox(height: AppSpacing.xxl),
-              Text(
-                'splash.appName'.tr(),
-                style: context.displayMedium.copyWith(
-                  color: AppColors.white,
+              Semantics(
+                label: 'EatEpic',
+                image: true,
+                child: Image.asset(
+                  'assets/icon/app_icon.png',
+                  width: 160,
+                  height: 160,
                 ),
               ),
               const SizedBox(height: 48),

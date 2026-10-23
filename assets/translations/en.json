@@ -49,7 +49,7 @@
     "continueButton": "Continue"
   },
   "splash": {
-    "appName": "Food App"
+    "appName": "EatEpic"
   },
   "account": {
     "title": "Account",
@@ -89,23 +89,40 @@
   },
   "login": {
     "completeProfile": "Complete your profile",
-    "loginOrSignup": "Login or Sign up",
-    "completeProfileSubtitle": "Tell us your name to finish signup",
-    "enterMobileSubtitle": "Enter your mobile number to continue",
+    "loginOrSignup": "Get started",
+    "headline": "Home-cooked meals,\nfrom kitchens near you",
+    "headlineDark": "Ghar ka khana,\ndelivered hot.",
+    "completeProfileSubtitle": "Add your name and email to finish signup",
+    "enterMobileSubtitle": "Log in or sign up with your mobile number.",
     "enterMobileHint": "Enter mobile number",
+    "mobileLabel": "Mobile number",
+    "mobilePlaceholder": "98765 43210",
+    "countryCodeIndia": "Country code India +91",
     "fullNameHint": "Full name",
     "emailHint": "Email",
     "invalidEmail": "Please enter a valid email",
+    "invalidPhoneHint": "Enter a 10-digit mobile number",
     "createAccount": "Create account",
     "continueButton": "Continue",
+    "getOtp": "Get OTP",
+    "useDifferentNumber": "Use a different number",
+    "useDifferentAccount": "Use a different account",
     "loginFailed": "Login failed. Please try again.",
     "registrationFailed": "Registration failed. Please try again.",
-    "orContinueWith": "or",
-    "googleButton": "Sign in with Google",
+    "orContinueWith": "or continue with",
+    "googleButton": "Continue with Google",
     "googleFailed": "Google sign-in failed. Please try again.",
     "googleNotConfigured": "Google Sign-In is not available right now.",
     "googleConsoleNotSetup": "Google Sign-In is not set up correctly. Create a Web OAuth client in Google Cloud Console (not Android) and use that client ID in the app. Keep the Android client with package com.eatepic.user and the debug SHA-1.",
-    "googleMobileSubtitle": "Almost done! Add your mobile number so kitchens and delivery partners can reach you."
+    "googleMobileSubtitle": "Add your mobile number so kitchens and delivery partners can reach you.",
+    "badgeHomeKitchens": "Home kitchens",
+    "badgeFresh30": "Fresh in 30 min",
+    "badgeHot30": "Hot in 30 min",
+    "badgeRatedCooks": "Rated cooks",
+    "legalBefore": "By continuing, you agree to our ",
+    "terms": "Terms",
+    "legalAnd": " & ",
+    "privacy": "Privacy Policy"
   },
   "cartBar": {
     "item": "Item",

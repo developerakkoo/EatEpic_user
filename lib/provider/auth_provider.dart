@@ -41,6 +41,15 @@ class AuthProvider with ChangeNotifier {
     _lastError = null;
   }
 
+  /// Returns the login form to the first step without calling the API.
+  void cancelRegistration() {
+    _requiresRegistration = false;
+    _pendingMobile = null;
+    _lastError = null;
+    _clearGoogleState();
+    notifyListeners();
+  }
+
   Future<bool> restoreSession() async {
     final hasToken = await _services.authRepository.hasSession();
     if (!hasToken) return false;

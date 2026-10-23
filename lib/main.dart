@@ -86,7 +86,7 @@ class MyApp extends StatelessWidget {
         builder: (context, theme, _) {
           return MaterialApp(
             debugShowCheckedModeBanner: false,
-            title: 'Food App',
+            title: 'EatEpic',
             localizationsDelegates: context.localizationDelegates,
             supportedLocales: context.supportedLocales,
             locale: context.locale,

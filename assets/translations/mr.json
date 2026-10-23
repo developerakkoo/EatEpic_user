@@ -49,7 +49,7 @@
     "continueButton": "सुरू ठेवा"
   },
   "splash": {
-    "appName": "फूड ॲप"
+    "appName": "EatEpic"
   },
   "account": {
     "title": "खाते",
@@ -89,23 +89,40 @@
   },
   "login": {
     "completeProfile": "तुमची प्रोफाइल पूर्ण करा",
-    "loginOrSignup": "लॉगिन किंवा साइन अप",
-    "completeProfileSubtitle": "साइनअप पूर्ण करण्यासाठी आम्हाला तुमचे नाव सांगा",
-    "enterMobileSubtitle": "सुरू ठेवण्यासाठी तुमचा मोबाइल नंबर टाका",
+    "loginOrSignup": "सुरुवात करा",
+    "headline": "घरचे जेवण,\nजवळच्या किचनमधून",
+    "headlineDark": "घरचं जेवण,\nगरम पोहोचवले.",
+    "completeProfileSubtitle": "साइनअप पूर्ण करण्यासाठी तुमचे नाव आणि ईमेल जोडा",
+    "enterMobileSubtitle": "तुमच्या मोबाइल नंबरने लॉगिन किंवा साइन अप करा.",
     "enterMobileHint": "मोबाइल नंबर टाका",
+    "mobileLabel": "मोबाइल नंबर",
+    "mobilePlaceholder": "98765 43210",
+    "countryCodeIndia": "देश कोड भारत +91",
     "fullNameHint": "पूर्ण नाव",
     "emailHint": "ईमेल",
     "invalidEmail": "कृपया वैध ईमेल टाका",
+    "invalidPhoneHint": "१० अंकी मोबाइल नंबर टाका",
     "createAccount": "खाते तयार करा",
     "continueButton": "सुरू ठेवा",
+    "getOtp": "OTP मिळवा",
+    "useDifferentNumber": "वेगळा नंबर वापरा",
+    "useDifferentAccount": "वेगळे खाते वापरा",
     "loginFailed": "लॉगिन अयशस्वी. कृपया पुन्हा प्रयत्न करा.",
     "registrationFailed": "नोंदणी अयशस्वी. कृपया पुन्हा प्रयत्न करा.",
-    "orContinueWith": "किंवा",
-    "googleButton": "Google ने साइन इन करा",
+    "orContinueWith": "किंवा पुढे जा",
+    "googleButton": "Google ने पुढे जा",
     "googleFailed": "Google साइन-इन अयशस्वी. कृपया पुन्हा प्रयत्न करा.",
     "googleNotConfigured": "Google साइन-इन सध्या उपलब्ध नाही.",
     "googleConsoleNotSetup": "Google साइन-इन योग्य सेट नाही. Google Cloud Console मध्ये Web OAuth क्लायंट तयार करा (Android नाही) आणि तो क्लायंट ID अॅपमध्ये वापरा.",
-    "googleMobileSubtitle": "जवळपास झाले! किचन आणि डिलिव्हरी पार्टनर तुमच्याशी संपर्क साधू शकतील म्हणून तुमचा मोबाईल नंबर जोडा."
+    "googleMobileSubtitle": "किचन आणि डिलिव्हरी पार्टनर तुमच्याशी संपर्क साधू शकतील म्हणून तुमचा मोबाइल नंबर जोडा.",
+    "badgeHomeKitchens": "होम किचन",
+    "badgeFresh30": "३० मिनिटांत ताजे",
+    "badgeHot30": "३० मिनिटांत गरम",
+    "badgeRatedCooks": "रेटेड कुक",
+    "legalBefore": "पुढे जाऊन तुम्ही आमच्या ",
+    "terms": "अटी",
+    "legalAnd": " आणि ",
+    "privacy": "गोपनीयता धोरण"
   },
   "cartBar": {
     "item": "वस्तू",

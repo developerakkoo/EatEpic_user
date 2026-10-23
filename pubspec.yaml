@@ -48,6 +48,7 @@ dependencies:
   url_launcher: ^6.3.2
   easy_localization: ^3.0.8
   google_sign_in: ^7.2.0
+  google_fonts: ^8.2.1
 
 dependency_overrides:
   google_maps_apis: ^5.0.0
@@ -76,6 +77,7 @@ flutter:
 
   assets:
     - assets/
+    - assets/icon/
     - assets/translations/
 
   fonts:
