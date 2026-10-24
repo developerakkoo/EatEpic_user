@@ -1,6 +1,7 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:food_app/core/app_theme.dart';
+import 'package:food_app/core/utils/error_messages.dart';
 import 'package:food_app/core/design/app_spacing.dart';
 import 'package:food_app/core/di/app_services.dart';
 import 'package:food_app/data/models/subscription_models.dart';
@@ -108,6 +109,29 @@ class _CreateSubscriptionScreenState extends State<CreateSubscriptionScreen> {
       return;
     }
 
+    if (_payment == 'WALLET') {
+      try {
+        final balance = await AppServices.instance.userRepository.getWalletBalance();
+        if (balance + 0.001 < plan.displayPrice) {
+          if (!mounted) return;
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Text('sub.walletInsufficient'.tr(namedArgs: {
+                'balance': balance.toStringAsFixed(0),
+              })),
+            ),
+          );
+          return;
+        }
+      } catch (e) {
+        if (!mounted) return;
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text(friendlyErrorMessage(e))),
+        );
+        return;
+      }
+    }
+
     setState(() => _submitting = true);
     try {
       final result = await _repo.purchase(
@@ -132,7 +156,11 @@ class _CreateSubscriptionScreenState extends State<CreateSubscriptionScreen> {
     } catch (e) {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('sub.purchaseFailed'.tr(namedArgs: {'error': '$e'}))),
+          SnackBar(
+            content: Text('sub.purchaseFailed'.tr(
+              namedArgs: {'error': friendlyErrorMessage(e)},
+            )),
+          ),
         );
       }
     } finally {

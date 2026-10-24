@@ -6,9 +6,11 @@ class HotelProvider extends ChangeNotifier {
   final _kitchens = AppServices.instance.kitchenRepository;
 
   bool _isLoading = false;
+  int _fetchGeneration = 0;
   String? _categoryId;
   String? _errorMessage;
   final List<HotelModel> _hotels = [];
+  final Map<String, ({double rating, int count})> _appliedRatings = {};
 
   bool get isLoading => _isLoading;
   List<HotelModel> get hotels => _hotels;
@@ -40,24 +42,55 @@ class HotelProvider extends ChangeNotifier {
     _errorMessage = null;
     notifyListeners();
 
+    final generation = ++_fetchGeneration;
     try {
       final list = await _kitchens.getNearbyKitchens(
         latitude: latitude,
         longitude: longitude,
         categoryId: categoryId,
         forceRefresh: forceRefresh,
+        onRefreshed: (fresh) {
+          if (generation != _fetchGeneration) return;
+          _hotels
+            ..clear()
+            ..addAll(fresh.map(_withAppliedRating));
+          notifyListeners();
+        },
       );
+      if (generation != _fetchGeneration) return;
       _hotels
         ..clear()
-        ..addAll(list);
+        ..addAll(list.map(_withAppliedRating));
     } catch (e, st) {
+      if (generation != _fetchGeneration) return;
       debugPrint('fetchHotels failed: $e');
       debugPrint('$st');
       _hotels.clear();
       _errorMessage = e.toString();
     } finally {
-      _isLoading = false;
-      notifyListeners();
+      if (generation == _fetchGeneration) {
+        _isLoading = false;
+        notifyListeners();
+      }
     }
+  }
+
+  void applyKitchenRating({
+    required String kitchenId,
+    required double averageRating,
+    required int totalReviews,
+  }) {
+    if (totalReviews <= 0) return;
+    _appliedRatings[kitchenId] = (rating: averageRating, count: totalReviews);
+    final index = _hotels.indexWhere((hotel) => hotel.id == kitchenId);
+    if (index < 0) return;
+    _hotels[index] = _withAppliedRating(_hotels[index]);
+    notifyListeners();
+  }
+
+  HotelModel _withAppliedRating(HotelModel hotel) {
+    final applied = _appliedRatings[hotel.id];
+    if (applied == null || hotel.reviewCount > applied.count) return hotel;
+    return hotel.copyWith(rating: applied.rating, reviewCount: applied.count);
   }
 }

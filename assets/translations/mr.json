@@ -177,6 +177,31 @@
   "category": {
     "noKitchens": "या श्रेणीत कोणतीही किचन नाही"
   },
+  "rating": {
+    "new": "नवीन",
+    "meta": "{rating} · {count} रेटिंग · {mins} मिनिटे",
+    "minsOnly": "{mins} मिनिटे",
+    "ratingsCount": "{count} रेटिंग",
+    "reviews": "समीक्षा",
+    "noRatingsYet": "अजून रेटिंग नाहीत",
+    "loadMore": "आणखी पहा",
+    "loadFailed": "समीक्षा लोड होऊ शकल्या नाहीत"
+  },
+  "rateOrder": {
+    "title": "{name} ला रेट करा",
+    "editTitle": "तुमची रेटिंग बदला",
+    "restaurant": "रेस्टॉरंट",
+    "delivery": "डिलिव्हरी",
+    "commentHint": "तुमचा अनुभव लिहा (ऐच्छिक)",
+    "submit": "पाठवा",
+    "update": "अपडेट करा",
+    "later": "नंतर",
+    "rateRestaurant": "रेस्टॉरंटला रेट करा",
+    "rate": "रेट करा",
+    "edit": "बदला",
+    "yourRating": "तुमची रेटिंग · {rating}",
+    "failed": "रेटिंग पाठवता आली नाही"
+  },
   "hotelDetail": {
     "mealSubscriptions": "जेवण सदस्यता",
     "noMenuItems": "कोणतेही मेनू आयटम उपलब्ध नाहीत",
@@ -408,6 +433,8 @@
     "noPlansAvailable": "कोणतेही प्लॅन उपलब्ध नाहीत",
     "addAddress": "पत्ता जोडा",
     "payWithWallet": "वॉलेटने पेमेंट करा",
+    "walletBalance": "बॅलन्स: ₹{balance}",
+    "walletInsufficient": "वॉलेट बॅलन्स पुरेसे नाही (₹{balance}). पैसे भरा किंवा ऑनलाइन पेमेंट करा.",
     "payOnline": "ऑनलाइन पेमेंट करा",
     "planMeals": "{title} · {count} जेवण",
     "total": "एकूण: ₹{amount}",

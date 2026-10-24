@@ -236,11 +236,14 @@ class AppLinkRouter {
         final menu = await AppServices.instance.kitchenRepository.getKitchenMenu(kitchenId);
         final kitchen = menu['kitchen'] as Map<String, dynamic>?;
         if (kitchen != null) {
+          final average = kitchen['averageRating'];
+          final total = kitchen['totalReviews'];
           hotel = HotelModel(
             id: kitchenId,
             name: kitchen['kitchenName']?.toString() ?? 'Kitchen',
             imageUrl: 'https://picsum.photos/seed/$kitchenId/600/400',
-            rating: 4.2,
+            rating: average is num ? average.toDouble() : 0,
+            reviewCount: total is num ? total.round() : 0,
             cuisine: kitchen['address']?.toString() ?? 'Multi cuisine',
             deliveryTime: 30,
             priceForOne: 200,

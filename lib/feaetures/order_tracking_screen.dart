@@ -5,6 +5,8 @@ import 'package:flutter/material.dart';
 import 'package:food_app/core/app_theme.dart';
 import 'package:food_app/core/design/app_spacing.dart';
 import 'package:food_app/core/di/app_services.dart';
+import 'package:food_app/core/widgets/rate_order_sheet.dart';
+import 'package:food_app/data/models/user_order_models.dart';
 import 'package:food_app/provider/order_tracking_provider.dart';
 import 'package:provider/provider.dart';
 
@@ -20,6 +22,7 @@ class OrderTrackingScreen extends StatefulWidget {
 class _OrderTrackingScreenState extends State<OrderTrackingScreen> {
   Map<String, dynamic>? _order;
   bool _loading = true;
+  bool _promptedRating = false;
   Timer? _pollTimer;
   Map<String, dynamic>? _lastLocation;
 
@@ -64,6 +67,10 @@ class _OrderTrackingScreenState extends State<OrderTrackingScreen> {
     WidgetsBinding.instance.addPostFrameCallback((_) {
       if (!mounted) return;
       context.read<OrderTrackingProvider>().applySocketUpdate(p);
+      final internal = p['internalStatus']?.toString() ?? p['status']?.toString();
+      if (internal == 'DELIVERED' || internal == 'CANCELLED') {
+        _load(silent: true);
+      }
     });
   }
 
@@ -88,10 +95,32 @@ class _OrderTrackingScreenState extends State<OrderTrackingScreen> {
         if (status == 'DELIVERED' || status == 'CANCELLED') {
           _pollTimer?.cancel();
         }
+        if (status == 'DELIVERED') {
+          _maybePromptRating(data);
+        }
       }
     } catch (_) {
       if (mounted && !silent) setState(() => _loading = false);
     }
+  }
+
+  void _maybePromptRating(Map<String, dynamic> data) {
+    if (_promptedRating || !mounted) return;
+    final summary = UserOrderSummary.fromOrderJson(data);
+    if (!summary.canRateRestaurant || summary.hasRestaurantRating) return;
+    _promptedRating = true;
+    WidgetsBinding.instance.addPostFrameCallback((_) async {
+      if (!mounted) return;
+      final saved = await showRateOrderSheet(
+        context,
+        orderId: widget.orderId,
+        restaurantName: summary.partnerName,
+        hasDeliveryAgent: summary.hasDeliveryAgent,
+      );
+      if (saved != null && mounted) {
+        await _load(silent: true);
+      }
+    });
   }
 
   int _indexFor(String status) {

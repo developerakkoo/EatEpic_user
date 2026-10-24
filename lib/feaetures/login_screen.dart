@@ -354,7 +354,7 @@ class _LoginScreenState extends State<LoginScreen> {
 }
 
 class _EatEpicLogo extends StatelessWidget {
-  const _EatEpicLogo({this.size = 176});
+  const _EatEpicLogo({this.size = 44});
 
   static const _asset = 'assets/icon/app_icon.png';
 
@@ -365,53 +365,27 @@ class _EatEpicLogo extends StatelessWidget {
     return Semantics(
       label: 'EatEpic',
       image: true,
-      child: Image.asset(
-        _asset,
-        width: size,
-        height: size,
-        fit: BoxFit.contain,
-        filterQuality: FilterQuality.high,
-        errorBuilder: (context, error, stackTrace) {
-          return SizedBox(
-            width: size,
-            height: size,
-            child: DecoratedBox(
-              decoration: BoxDecoration(
-                color: Colors.white.withValues(alpha: 0.12),
-                shape: BoxShape.circle,
-                border: Border.all(color: Colors.white, width: 2),
-              ),
-              child: Center(
-                child: Text(
-                  'EatEpic',
-                  style: LoginType.logo(Colors.white),
+      child: ClipOval(
+        child: Image.asset(
+          _asset,
+          width: size,
+          height: size,
+          fit: BoxFit.cover,
+          filterQuality: FilterQuality.high,
+          errorBuilder: (context, error, stackTrace) {
+            return SizedBox(
+              width: size,
+              height: size,
+              child: const DecoratedBox(
+                decoration: BoxDecoration(
+                  color: Colors.white,
+                  shape: BoxShape.circle,
                 ),
               ),
-            ),
-          );
-        },
-      ),
-    );
-  }
-}
-
-class _BrandWordmark extends StatelessWidget {
-  const _BrandWordmark({this.nameColor});
-
-  final Color? nameColor;
-
-  @override
-  Widget build(BuildContext context) {
-    return Row(
-      mainAxisSize: MainAxisSize.min,
-      children: [
-        const _EatEpicLogo(size: 36),
-        const SizedBox(width: 10),
-        Text(
-          'splash.appName'.tr(),
-          style: LoginType.logo(nameColor ?? Colors.white),
+            );
+          },
         ),
-      ],
+      ),
     );
   }
 }
@@ -464,20 +438,20 @@ class _LightHero extends StatelessWidget {
             ),
           ),
           Padding(
-            padding: EdgeInsets.fromLTRB(24, topInset + 12, 24, 16),
+            padding: EdgeInsets.fromLTRB(24, topInset + 16, 24, 0),
             child: Column(
               children: [
                 const Align(
                   alignment: Alignment.centerLeft,
-                  child: _BrandWordmark(),
+                  child: _EatEpicLogo(),
                 ),
                 Expanded(
                   child: Stack(
                     alignment: Alignment.center,
                     children: [
-                      const _EatEpicLogo(size: 176),
+                      const LoginBowlIllustration(),
                       Positioned(
-                        top: 4,
+                        top: 8,
                         right: 0,
                         child: LoginHeroBadge(
                           icon: Icons.home_rounded,
@@ -486,7 +460,7 @@ class _LightHero extends StatelessWidget {
                         ),
                       ),
                       Positioned(
-                        bottom: 4,
+                        bottom: 12,
                         left: 0,
                         child: LoginHeroBadge(
                           icon: Icons.schedule_rounded,
@@ -517,9 +491,9 @@ class _DarkHero extends StatelessWidget {
       padding: EdgeInsets.fromLTRB(24, topInset + 16, 24, 0),
       child: Column(
         children: [
-          Align(
+          const Align(
             alignment: Alignment.centerLeft,
-            child: _BrandWordmark(nameColor: LoginTokens.darkText),
+            child: _EatEpicLogo(),
           ),
           const SizedBox(height: 20),
           Row(

@@ -57,7 +57,7 @@ class SubscriptionRepository {
       '/api/user/subscriptions/purchase',
       data: {
         'planId': planId,
-        'startDate': startDate.toUtc().toIso8601String(),
+        'startDate': _dateOnly(startDate),
         'paymentMethod': paymentMethod,
         if (addressId != null) 'addressId': addressId,
         'autoRenew': autoRenew,
@@ -113,8 +113,8 @@ class SubscriptionRepository {
     final res = await _api.dio.get(
       '/api/user/subscriptions/deliveries',
       queryParameters: {
-        'from': from.toIso8601String(),
-        'to': to.toIso8601String(),
+        'from': _dateOnly(from),
+        'to': _dateOnly(to),
       },
     );
     final list = res.data['data'] as List<dynamic>? ?? [];
@@ -244,6 +244,13 @@ class SubscriptionRepository {
       '/api/user/subscriptions/$subscriptionId/upgrade',
       data: {'planId': planId},
     );
+  }
+
+  String _dateOnly(DateTime date) {
+    final local = DateTime(date.year, date.month, date.day);
+    final month = local.month.toString().padLeft(2, '0');
+    final day = local.day.toString().padLeft(2, '0');
+    return '${local.year}-$month-$day';
   }
 
   Map<String, dynamic> _unwrapDataRow(dynamic body) {

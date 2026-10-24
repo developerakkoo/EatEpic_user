@@ -2,6 +2,7 @@ import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:food_app/core/app_theme.dart';
 import 'package:food_app/core/design/app_spacing.dart';
+import 'package:food_app/core/utils/error_messages.dart';
 import 'package:food_app/core/widgets/subscription/subscription_calendar_legend.dart';
 import 'package:food_app/core/widgets/subscription/subscription_manage_sheet.dart';
 import 'package:food_app/core/widgets/subscription/subscription_plan_card.dart';
@@ -340,8 +341,8 @@ class _DeliveryTile extends StatelessWidget {
                     if (context.mounted) {
                       ScaffoldMessenger.of(context).showSnackBar(
                         SnackBar(
-                            content: Text(
-                                'sub.skipFailed'.tr(namedArgs: {'error': '$e'}))),
+                            content: Text('sub.skipFailed'.tr(
+                                namedArgs: {'error': friendlyErrorMessage(e)}))),
                       );
                     }
                   }

@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:food_app/core/app_theme.dart';
 import 'package:food_app/core/design/app_spacing.dart';
 import 'package:food_app/core/di/app_services.dart';
+import 'package:food_app/core/widgets/rate_order_sheet.dart';
 import 'package:food_app/data/models/user_order_models.dart';
 import 'package:food_app/feaetures/login_screen.dart';
 import 'package:food_app/feaetures/order_detail_screen.dart';
@@ -285,6 +286,28 @@ class _OrdersListScreenState extends State<OrdersListScreen>
             padding: const EdgeInsets.only(bottom: AppSpacing.md),
             child: _OrderRowCard(
               order: o,
+              onRate: o.canRateRestaurant
+                  ? () async {
+                      final saved = await showRateOrderSheet(
+                        context,
+                        orderId: o.id,
+                        restaurantName: o.partnerName,
+                        hasDeliveryAgent: o.hasDeliveryAgent,
+                        initialPartnerRating: o.partnerRating,
+                        initialDeliveryRating: o.deliveryRating,
+                        initialReview: o.review,
+                      );
+                      if (saved != null && mounted) {
+                        setState(() {
+                          _byId[o.id] = o.copyWithRating(
+                            partnerRating: saved.partnerRating,
+                            deliveryRating: saved.deliveryRating,
+                            review: saved.review,
+                          );
+                        });
+                      }
+                    }
+                  : null,
               onTap: () async {
                 final changed = await Navigator.push<bool>(
                   context,
@@ -303,10 +326,15 @@ class _OrdersListScreenState extends State<OrdersListScreen>
 }
 
 class _OrderRowCard extends StatelessWidget {
-  const _OrderRowCard({required this.order, required this.onTap});
+  const _OrderRowCard({
+    required this.order,
+    required this.onTap,
+    this.onRate,
+  });
 
   final UserOrderSummary order;
   final VoidCallback onTap;
+  final VoidCallback? onRate;
 
   @override
   Widget build(BuildContext context) {
@@ -322,7 +350,10 @@ class _OrderRowCard extends StatelessWidget {
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(AppRadius.medium + 2),
       ),
-      child: InkWell(
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          InkWell(
         onTap: onTap,
         borderRadius: BorderRadius.circular(AppRadius.medium + 2),
         child: Padding(
@@ -421,6 +452,36 @@ class _OrderRowCard extends StatelessWidget {
             ],
           ),
         ),
+      ),
+          if (onRate != null)
+            Padding(
+              padding: const EdgeInsets.fromLTRB(
+                AppSpacing.md,
+                0,
+                AppSpacing.md,
+                AppSpacing.sm,
+              ),
+              child: Align(
+                alignment: Alignment.centerLeft,
+                child: TextButton(
+                  onPressed: onRate,
+                  style: TextButton.styleFrom(
+                    foregroundColor: AppColors.primary,
+                    visualDensity: VisualDensity.compact,
+                    padding: EdgeInsets.zero,
+                    tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                  ),
+                  child: Text(
+                    order.hasRestaurantRating
+                        ? 'rateOrder.yourRating'.tr(namedArgs: {
+                            'rating': '${order.partnerRating}',
+                          })
+                        : 'rateOrder.rateRestaurant'.tr(),
+                  ),
+                ),
+              ),
+            ),
+        ],
       ),
     );
   }

@@ -7,6 +7,7 @@ import 'package:flutter/services.dart';
 import 'package:food_app/core/app_theme.dart';
 import 'package:food_app/core/design/app_spacing.dart';
 import 'package:food_app/core/di/app_services.dart';
+import 'package:food_app/core/widgets/rate_order_sheet.dart';
 import 'package:food_app/data/models/user_order_models.dart';
 import 'package:food_app/feaetures/order_tracking_screen.dart';
 import 'package:url_launcher/url_launcher.dart';
@@ -29,6 +30,7 @@ class _OrderDetailScreenState extends State<OrderDetailScreen> {
   bool _loading = true;
   String? _error;
   bool _cancelling = false;
+  bool _rated = false;
 
   static const List<(String, String, IconData)> _timelineSpecs = [
     ('placedAt', 'orderStatus.placed', Icons.receipt_long_outlined),
@@ -83,6 +85,22 @@ class _OrderDetailScreenState extends State<OrderDetailScreen> {
       return;
     }
     await launchUrl(uri, mode: LaunchMode.externalApplication);
+  }
+
+  Future<void> _rateOrder(UserOrderDetail d) async {
+    final saved = await showRateOrderSheet(
+      context,
+      orderId: widget.orderId,
+      restaurantName: d.summary.partnerName,
+      hasDeliveryAgent: d.summary.hasDeliveryAgent,
+      initialPartnerRating: d.summary.partnerRating,
+      initialDeliveryRating: d.summary.deliveryRating,
+      initialReview: d.summary.review,
+    );
+    if (saved != null && mounted) {
+      _rated = true;
+      await _load();
+    }
   }
 
   Future<void> _confirmCancel(UserOrderDetail d) async {
@@ -176,7 +194,13 @@ class _OrderDetailScreenState extends State<OrderDetailScreen> {
 
     final canTrack = s.status.toUpperCase() != 'CANCELLED';
 
-    return Scaffold(
+    return PopScope(
+      canPop: false,
+      onPopInvokedWithResult: (didPop, result) {
+        if (didPop) return;
+        Navigator.pop(context, _rated);
+      },
+      child: Scaffold(
       bottomNavigationBar: SafeArea(
         child: Padding(
           padding: const EdgeInsets.fromLTRB(
@@ -300,6 +324,8 @@ class _OrderDetailScreenState extends State<OrderDetailScreen> {
           ),
           SliverToBoxAdapter(child: _headerMetaRow(d)),
           SliverToBoxAdapter(child: _restaurantTile(d)),
+          if (s.canRateRestaurant)
+            SliverToBoxAdapter(child: _ratingCard(d)),
           if (d.partnerPhone.trim().isNotEmpty)
             SliverToBoxAdapter(
               child: Padding(
@@ -380,6 +406,64 @@ class _OrderDetailScreenState extends State<OrderDetailScreen> {
           SliverToBoxAdapter(child: _timelineCard(d)),
           const SliverToBoxAdapter(child: SizedBox(height: 120)),
         ],
+      ),
+      ),
+    );
+  }
+
+  Widget _ratingCard(UserOrderDetail d) {
+    final s = d.summary;
+    final rated = s.hasRestaurantRating;
+    return Padding(
+      padding: const EdgeInsets.fromLTRB(
+        AppSpacing.lg,
+        0,
+        AppSpacing.lg,
+        AppSpacing.sm,
+      ),
+      child: Material(
+        color: context.colors.surfaceGrey,
+        borderRadius: BorderRadius.circular(AppRadius.medium),
+        child: Padding(
+          padding: const EdgeInsets.all(AppSpacing.md),
+          child: Row(
+            children: [
+              Icon(
+                Icons.star_rounded,
+                color: rated ? AppColors.starColor : context.colors.textHint,
+              ),
+              const SizedBox(width: AppSpacing.sm),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      rated
+                          ? 'rateOrder.yourRating'.tr(namedArgs: {
+                              'rating': '${s.partnerRating}',
+                            })
+                          : 'rateOrder.rateRestaurant'.tr(),
+                      style: context.bodyLarge.copyWith(fontWeight: FontWeight.w600),
+                    ),
+                    if (rated && s.review.trim().isNotEmpty)
+                      Text(
+                        s.review,
+                        maxLines: 2,
+                        overflow: TextOverflow.ellipsis,
+                        style: context.bodySmall.copyWith(
+                          color: context.colors.textSecondary,
+                        ),
+                      ),
+                  ],
+                ),
+              ),
+              TextButton(
+                onPressed: () => _rateOrder(d),
+                child: Text(rated ? 'rateOrder.edit'.tr() : 'rateOrder.rate'.tr()),
+              ),
+            ],
+          ),
+        ),
       ),
     );
   }

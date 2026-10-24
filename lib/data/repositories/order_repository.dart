@@ -2,6 +2,24 @@ import 'package:dio/dio.dart';
 import 'package:food_app/core/network/api_client.dart';
 import 'package:food_app/data/models/user_order_models.dart';
 
+class OrderRatingResult {
+  const OrderRatingResult({
+    required this.partnerRating,
+    this.deliveryRating,
+    required this.review,
+    this.kitchenId,
+    this.averageRating = 0,
+    this.totalReviews = 0,
+  });
+
+  final int partnerRating;
+  final int? deliveryRating;
+  final String review;
+  final String? kitchenId;
+  final double averageRating;
+  final int totalReviews;
+}
+
 class OrderRepository {
   OrderRepository(this._api);
 
@@ -112,6 +130,42 @@ class OrderRepository {
     await _api.dio.patch(
       '/api/order/cancel/$orderId',
       data: {if (reason != null) 'reason': reason},
+    );
+  }
+
+  Future<OrderRatingResult> rateOrder({
+    required String orderId,
+    required int partnerRating,
+    int? deliveryRating,
+    String review = '',
+  }) async {
+    final response = await _api.dio.post(
+      '/api/order/$orderId/rate',
+      data: {
+        'partnerRating': partnerRating,
+        if (deliveryRating != null) 'deliveryRating': deliveryRating,
+        'review': review,
+      },
+    );
+    final body = response.data;
+    final map = body is Map ? Map<String, dynamic>.from(body) : <String, dynamic>{};
+    final summary = map['ratingSummary'];
+    final summaryMap = summary is Map
+        ? Map<String, dynamic>.from(summary)
+        : const <String, dynamic>{};
+    final data = map['data'];
+    final dataMap = data is Map ? Map<String, dynamic>.from(data) : const <String, dynamic>{};
+    final savedStars = dataMap['partnerRating'];
+    final savedReview = dataMap['review'];
+    final average = summaryMap['averageRating'];
+    final total = summaryMap['totalReviews'];
+    return OrderRatingResult(
+      partnerRating: savedStars is num ? savedStars.round() : partnerRating,
+      deliveryRating: deliveryRating,
+      review: savedReview is String ? savedReview : review,
+      kitchenId: map['partnerId']?.toString(),
+      averageRating: average is num ? average.toDouble() : 0,
+      totalReviews: total is num ? total.round() : 0,
     );
   }
 }

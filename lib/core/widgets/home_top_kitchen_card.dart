@@ -19,6 +19,7 @@ class HomeTopKitchenCard extends StatelessWidget {
       imageUrl: hotel.imageUrl,
       name: hotel.name,
       rating: hotel.rating,
+      reviewCount: hotel.reviewCount,
       deliveryTimeMinutes: hotel.deliveryTime,
       discountLabel: hotel.discount,
     );

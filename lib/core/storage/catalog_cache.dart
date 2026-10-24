@@ -58,6 +58,14 @@ class CatalogCache {
     return v as List<dynamic>?;
   }
 
+  Future<void> clearKitchens() async {
+    final prefs = await SharedPreferences.getInstance();
+    final keys = prefs.getKeys().where((k) => k.startsWith('cache_kitchens'));
+    for (final key in keys) {
+      await prefs.remove(key);
+    }
+  }
+
   Future<void> clearCatalog() async {
     final prefs = await SharedPreferences.getInstance();
     final keys = prefs.getKeys().where(

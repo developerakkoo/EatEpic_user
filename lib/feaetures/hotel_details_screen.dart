@@ -4,6 +4,8 @@ import 'package:flutter/material.dart';
 import 'package:food_app/core/app_theme.dart';
 import 'package:food_app/core/design/app_spacing.dart';
 import 'package:food_app/core/di/app_services.dart';
+import 'package:food_app/core/widgets/kitchen_rating_badge.dart';
+import 'package:food_app/core/widgets/kitchen_reviews_section.dart';
 import 'package:food_app/core/widgets/menu_card.dart';
 import 'package:food_app/modal/hotel_modal.dart';
 import 'package:food_app/modal/menu_item_modal.dart';
@@ -25,6 +27,8 @@ class _HotelDetailScreenState extends State<HotelDetailScreen>
   final _kitchenRepo = AppServices.instance.kitchenRepository;
   List<MenuItemModel> _menuItems = [];
   bool _loadingMenu = true;
+  late double _rating = widget.hotel.rating;
+  late int _reviewCount = widget.hotel.reviewCount;
 
   AnimationController? _slideController;
   Animation<Offset>? _slideAnimation;
@@ -128,14 +132,39 @@ class _HotelDetailScreenState extends State<HotelDetailScreen>
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Text(
-                        hotel.name,
-                        style: context.headingLarge.copyWith(
-                          fontWeight: FontWeight.bold,
-                        ),
+                      Row(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Expanded(
+                            child: Text(
+                              hotel.name,
+                              style: context.headingLarge.copyWith(
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                          ),
+                          const SizedBox(width: AppSpacing.sm),
+                          KitchenRatingBadge(
+                            rating: _rating,
+                            reviewCount: _reviewCount,
+                          ),
+                        ],
                       ),
                       const SizedBox(height: AppSpacing.sm),
                       Text(hotel.cuisine, style: context.bodyLarge),
+                      const SizedBox(height: AppSpacing.lg),
+                      KitchenReviewsSection(
+                        kitchenId: hotel.id,
+                        initialRating: _rating,
+                        initialReviewCount: _reviewCount,
+                        onSummary: (rating, reviewCount) {
+                          if (!mounted) return;
+                          setState(() {
+                            _rating = rating;
+                            _reviewCount = reviewCount;
+                          });
+                        },
+                      ),
                       const SizedBox(height: AppSpacing.md),
                       OutlinedButton.icon(
                         onPressed: () => Navigator.push(

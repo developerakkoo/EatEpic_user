@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:food_app/core/app_theme.dart';
 import 'package:food_app/core/design/app_spacing.dart';
 import 'package:food_app/core/di/app_services.dart';
+import 'package:food_app/core/utils/error_messages.dart';
 import 'package:food_app/core/widgets/subscription/subscription_confirm_dialogs.dart';
 import 'package:food_app/core/widgets/subscription/subscription_stats_row.dart';
 import 'package:food_app/core/widgets/subscription/subscription_status_labels.dart';
@@ -95,7 +96,8 @@ class _SubscriptionManageSheetState extends State<SubscriptionManageSheet> {
       );
     } catch (e) {
       if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('$e')));
+        ScaffoldMessenger.of(context)
+            .showSnackBar(SnackBar(content: Text(friendlyErrorMessage(e))));
       }
     }
   }
@@ -109,7 +111,8 @@ class _SubscriptionManageSheetState extends State<SubscriptionManageSheet> {
       ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('sub.subscriptionResumed'.tr())));
     } catch (e) {
       if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('$e')));
+        ScaffoldMessenger.of(context)
+            .showSnackBar(SnackBar(content: Text(friendlyErrorMessage(e))));
       }
     }
   }
@@ -137,7 +140,8 @@ class _SubscriptionManageSheetState extends State<SubscriptionManageSheet> {
       );
     } catch (e) {
       if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('$e')));
+        ScaffoldMessenger.of(context)
+            .showSnackBar(SnackBar(content: Text(friendlyErrorMessage(e))));
       }
     }
   }
@@ -150,7 +154,8 @@ class _SubscriptionManageSheetState extends State<SubscriptionManageSheet> {
       await _load();
     } catch (e) {
       if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('$e')));
+        ScaffoldMessenger.of(context)
+            .showSnackBar(SnackBar(content: Text(friendlyErrorMessage(e))));
       }
     }
   }
@@ -187,7 +192,8 @@ class _SubscriptionManageSheetState extends State<SubscriptionManageSheet> {
       }
     } catch (e) {
       if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('$e')));
+        ScaffoldMessenger.of(context)
+            .showSnackBar(SnackBar(content: Text(friendlyErrorMessage(e))));
       }
     }
   }

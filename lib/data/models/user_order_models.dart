@@ -21,6 +21,10 @@ class UserOrderSummary {
     required this.moreItemCount,
     required this.totalAmount,
     this.heroImageUrl,
+    this.partnerRating,
+    this.deliveryRating,
+    this.review = '',
+    this.hasDeliveryAgent = false,
   });
 
   final String id;
@@ -34,6 +38,38 @@ class UserOrderSummary {
   final int moreItemCount;
   final int totalAmount;
   final String? heroImageUrl;
+  final int? partnerRating;
+  final int? deliveryRating;
+  final String review;
+  final bool hasDeliveryAgent;
+
+  bool get hasRestaurantRating =>
+      partnerRating != null && partnerRating! >= 1;
+
+  bool get canRateRestaurant => status.toUpperCase() == 'DELIVERED';
+
+  UserOrderSummary copyWithRating({
+    required int partnerRating,
+    int? deliveryRating,
+    required String review,
+  }) {
+    return UserOrderSummary(
+      id: id,
+      status: status,
+      orderType: orderType,
+      createdAt: createdAt,
+      partnerName: partnerName,
+      partnerAddress: partnerAddress,
+      primaryItemName: primaryItemName,
+      moreItemCount: moreItemCount,
+      totalAmount: totalAmount,
+      heroImageUrl: heroImageUrl,
+      partnerRating: partnerRating,
+      deliveryRating: deliveryRating ?? this.deliveryRating,
+      review: review,
+      hasDeliveryAgent: hasDeliveryAgent,
+    );
+  }
 
   bool get isSubscription => orderType.toUpperCase() == 'SUBSCRIPTION';
 
@@ -80,6 +116,21 @@ class UserOrderSummary {
       if (t is num) total = t.round();
     }
 
+    int? star(dynamic value) {
+      if (value is num && value >= 1) return value.round();
+      return null;
+    }
+
+    final rating = json['rating'];
+    int? partnerRating;
+    int? deliveryRating;
+    var review = '';
+    if (rating is Map) {
+      partnerRating = star(rating['partnerRating']);
+      deliveryRating = star(rating['deliveryRating']);
+      review = rating['review']?.toString() ?? '';
+    }
+
     return UserOrderSummary(
       id: _mongoId(json['_id']),
       status: json['status']?.toString() ?? 'PLACED',
@@ -93,7 +144,22 @@ class UserOrderSummary {
       moreItemCount: more,
       totalAmount: total,
       heroImageUrl: hero,
+      partnerRating: partnerRating,
+      deliveryRating: deliveryRating,
+      review: review,
+      hasDeliveryAgent: _hasDeliveryAgent(json['deliveryAgent']),
     );
+  }
+
+  static bool _hasDeliveryAgent(dynamic agent) {
+    if (agent == null) return false;
+    if (agent is String) return agent.isNotEmpty;
+    if (agent is Map) {
+      final id = agent['_id']?.toString() ?? '';
+      return id.isNotEmpty;
+    }
+    final text = agent.toString();
+    return text.isNotEmpty && text != 'null';
   }
 
   String get shortIdChip {

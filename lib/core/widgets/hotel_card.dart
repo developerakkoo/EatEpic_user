@@ -1,7 +1,9 @@
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:food_app/core/app_theme.dart';
 import 'package:food_app/core/design/app_spacing.dart';
+import 'package:food_app/core/widgets/kitchen_rating_badge.dart';
 import 'package:food_app/modal/hotel_modal.dart';
 
 class HotelCard extends StatelessWidget {
@@ -82,32 +84,12 @@ class HotelCard extends StatelessWidget {
                         ),
                       ),
 
-                    /// Rating Badge
                     Positioned(
                       right: 10,
                       top: 10,
-                      child: Container(
-                        padding: const EdgeInsets.symmetric(
-                          horizontal: AppSpacing.sm,
-                          vertical: AppSpacing.xs,
-                        ),
-                        decoration: BoxDecoration(
-                          color: AppColors.primary,
-                          borderRadius: BorderRadius.circular(AppRadius.small),
-                        ),
-                        child: Row(
-                          children: [
-                            const Icon(Icons.star, color: AppColors.white, size: 14),
-                            const SizedBox(width: AppSpacing.xs),
-                            Text(
-                              hotel.rating.toString(),
-                              style: context.caption.copyWith(
-                                color: AppColors.white,
-                                fontWeight: FontWeight.w600,
-                              ),
-                            ),
-                          ],
-                        ),
+                      child: KitchenRatingBadge(
+                        rating: hotel.rating,
+                        reviewCount: hotel.reviewCount,
                       ),
                     ),
 
@@ -185,6 +167,15 @@ class HotelCard extends StatelessWidget {
 
             Row(
               children: [
+                if (hotel.hasRatings) ...[
+                  Text(
+                    'rating.ratingsCount'.tr(namedArgs: {
+                      'count': '${hotel.reviewCount}',
+                    }),
+                    style: context.bodyMedium,
+                  ),
+                  const SizedBox(width: AppSpacing.md),
+                ],
                 Text('${hotel.deliveryTime} mins', style: context.bodyMedium),
                 const SizedBox(width: AppSpacing.md),
                 Text('₹${hotel.priceForOne} for one', style: context.bodyMedium),

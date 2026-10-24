@@ -1,8 +1,10 @@
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:food_app/core/app_theme.dart';
 import 'package:food_app/core/design/app_spacing.dart';
 import 'package:food_app/core/typography/app_text_styles.dart';
+import 'package:food_app/core/widgets/kitchen_rating_badge.dart';
 import 'package:shimmer/shimmer.dart';
 
 const String kKitchenCardDefaultDiscount = '20% off upto ₹100';
@@ -13,6 +15,7 @@ class KitchenRestaurantCard extends StatelessWidget {
     required this.imageUrl,
     required this.name,
     required this.rating,
+    this.reviewCount = 0,
     required this.deliveryTimeMinutes,
     this.discountLabel,
     this.width = AppLayout.kitchenCardWidth,
@@ -23,6 +26,7 @@ class KitchenRestaurantCard extends StatelessWidget {
   final String imageUrl;
   final String name;
   final double rating;
+  final int reviewCount;
   final int deliveryTimeMinutes;
   final String? discountLabel;
   final double width;
@@ -69,6 +73,14 @@ class KitchenRestaurantCard extends StatelessWidget {
           width: width == double.infinity ? double.infinity : width,
           height: imageHeight,
           child: _buildImage(context),
+        ),
+        Positioned(
+          right: AppSpacing.sm,
+          top: AppSpacing.sm,
+          child: KitchenRatingBadge(
+            rating: rating,
+            reviewCount: reviewCount,
+          ),
         ),
         Positioned(
           left: AppSpacing.sm,
@@ -150,28 +162,21 @@ class KitchenRestaurantCard extends StatelessWidget {
             overflow: TextOverflow.ellipsis,
           ),
           const SizedBox(height: AppSpacing.xs),
-          Row(
-            children: [
-              Icon(Icons.star_rounded, size: 14, color: AppColors.starColor),
-              const SizedBox(width: 2),
-              Text(
-                rating.toStringAsFixed(2),
-                style: context.bodySmall.copyWith(
-                  fontWeight: FontWeight.w600,
-                  color: context.colors.textPrimary,
-                ),
-              ),
-              Text(
-                ' · ',
-                style: context.bodySmall,
-              ),
-              Text(
-                '$deliveryTimeMinutes mins',
-                style: context.bodySmall.copyWith(
-                  color: context.colors.textSecondary,
-                ),
-              ),
-            ],
+          Text(
+            reviewCount > 0
+                ? 'rating.meta'.tr(namedArgs: {
+                    'rating': rating.toStringAsFixed(1),
+                    'count': '$reviewCount',
+                    'mins': '$deliveryTimeMinutes',
+                  })
+                : 'rating.minsOnly'.tr(namedArgs: {
+                    'mins': '$deliveryTimeMinutes',
+                  }),
+            style: context.bodySmall.copyWith(
+              color: context.colors.textSecondary,
+            ),
+            maxLines: 1,
+            overflow: TextOverflow.ellipsis,
           ),
         ],
       ),

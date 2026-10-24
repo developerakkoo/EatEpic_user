@@ -40,7 +40,7 @@ class LoginTokens {
   static const double radiusPill = 999;
   static const double radiusFeature = 20;
   static const double minTouch = 44;
-  static const double heroHeight = 380;
+  static const double heroHeight = 340;
   static const double fieldHeight = 56;
   static const double googleHeight = 54;
 

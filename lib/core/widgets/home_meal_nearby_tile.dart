@@ -21,6 +21,7 @@ class HomeMealNearbyTile extends StatelessWidget {
         imageUrl: hotel.imageUrl,
         name: hotel.name,
         rating: hotel.rating,
+        reviewCount: hotel.reviewCount,
         deliveryTimeMinutes: hotel.deliveryTime,
         discountLabel: hotel.discount,
         width: double.infinity,

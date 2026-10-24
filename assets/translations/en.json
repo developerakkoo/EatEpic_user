@@ -177,6 +177,31 @@
   "category": {
     "noKitchens": "No kitchens in this category"
   },
+  "rating": {
+    "new": "New",
+    "meta": "{rating} · {count} ratings · {mins} mins",
+    "minsOnly": "{mins} mins",
+    "ratingsCount": "{count} ratings",
+    "reviews": "Reviews",
+    "noRatingsYet": "No ratings yet",
+    "loadMore": "Load more",
+    "loadFailed": "Could not load reviews"
+  },
+  "rateOrder": {
+    "title": "Rate {name}",
+    "editTitle": "Edit your rating",
+    "restaurant": "Restaurant",
+    "delivery": "Delivery",
+    "commentHint": "Share your experience (optional)",
+    "submit": "Submit",
+    "update": "Update",
+    "later": "Maybe later",
+    "rateRestaurant": "Rate restaurant",
+    "rate": "Rate",
+    "edit": "Edit",
+    "yourRating": "Your rating · {rating}",
+    "failed": "Could not submit rating"
+  },
   "hotelDetail": {
     "mealSubscriptions": "Meal subscriptions",
     "noMenuItems": "No menu items available",
@@ -408,6 +433,8 @@
     "noPlansAvailable": "No plans available",
     "addAddress": "Add address",
     "payWithWallet": "Pay with wallet",
+    "walletBalance": "Balance: ₹{balance}",
+    "walletInsufficient": "Not enough wallet balance (₹{balance}). Add money or pay online.",
     "payOnline": "Pay online",
     "planMeals": "{title} · {count} meals",
     "total": "Total: ₹{amount}",

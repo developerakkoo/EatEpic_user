@@ -1,4 +1,5 @@
 import 'package:flutter/foundation.dart';
+import 'package:food_app/core/utils/error_messages.dart';
 import 'package:food_app/core/widgets/subscription/subscription_status_labels.dart';
 import 'package:food_app/data/models/subscription_models.dart';
 import 'package:food_app/data/repositories/subscription_repository.dart';
@@ -73,7 +74,7 @@ class SubscriptionProvider with ChangeNotifier {
       activeSubscriptions = results[1];
       _ensureDefaultSelection();
     } catch (e) {
-      lastError = e.toString();
+      lastError = friendlyErrorMessage(e);
       subscriptions = [];
       activeSubscriptions = [];
     } finally {
@@ -97,7 +98,7 @@ class SubscriptionProvider with ChangeNotifier {
       }
       deliveriesByDay = next;
     } catch (e) {
-      lastError = e.toString();
+      lastError = friendlyErrorMessage(e);
       deliveriesByDay = {};
     } finally {
       loadingCalendar = false;

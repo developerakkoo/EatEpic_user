@@ -1,6 +1,7 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:food_app/core/app_theme.dart';
+import 'package:food_app/core/utils/error_messages.dart';
 import 'package:food_app/core/design/app_spacing.dart';
 import 'package:food_app/core/di/app_services.dart';
 import 'package:food_app/data/models/app_user.dart';
@@ -64,6 +65,7 @@ class _SubscriptionQuickCheckoutSheetState extends State<SubscriptionQuickChecko
   bool _submitting = false;
   List<UserAddress> _addresses = [];
   String? _addressId;
+  double? _walletBalance;
 
   @override
   void initState() {
@@ -77,6 +79,14 @@ class _SubscriptionQuickCheckoutSheetState extends State<SubscriptionQuickChecko
       _loadPlans();
     }
     _loadAddresses();
+    _loadWallet();
+  }
+
+  Future<void> _loadWallet() async {
+    try {
+      final balance = await AppServices.instance.userRepository.getWalletBalance();
+      if (mounted) setState(() => _walletBalance = balance);
+    } catch (_) {}
   }
 
   Future<void> _loadAddresses() async {
@@ -131,6 +141,31 @@ class _SubscriptionQuickCheckoutSheetState extends State<SubscriptionQuickChecko
       return;
     }
 
+    if (_payment == 'WALLET') {
+      try {
+        final balance = _walletBalance ??
+            await AppServices.instance.userRepository.getWalletBalance();
+        if (balance + 0.001 < plan.displayPrice) {
+          if (!mounted) return;
+          setState(() => _walletBalance = balance);
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Text('sub.walletInsufficient'.tr(namedArgs: {
+                'balance': balance.toStringAsFixed(0),
+              })),
+            ),
+          );
+          return;
+        }
+      } catch (e) {
+        if (!mounted) return;
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text(friendlyErrorMessage(e))),
+        );
+        return;
+      }
+    }
+
     setState(() => _submitting = true);
     try {
       final result = await _repo.purchase(
@@ -151,7 +186,9 @@ class _SubscriptionQuickCheckoutSheetState extends State<SubscriptionQuickChecko
       );
     } catch (e) {
       if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('$e')));
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text(friendlyErrorMessage(e))),
+        );
       }
     } finally {
       if (mounted) setState(() => _submitting = false);
@@ -341,6 +378,13 @@ class _SubscriptionQuickCheckoutSheetState extends State<SubscriptionQuickChecko
           groupValue: _payment,
           onChanged: (v) => setState(() => _payment = v!),
           title: Text('sub.payWithWallet'.tr()),
+          subtitle: Text(
+            _walletBalance == null
+                ? 'sub.walletSubtitle'.tr()
+                : 'sub.walletBalance'.tr(namedArgs: {
+                    'balance': _walletBalance!.toStringAsFixed(0),
+                  }),
+          ),
         ),
         RadioListTile<String>(
           value: 'ONLINE',
