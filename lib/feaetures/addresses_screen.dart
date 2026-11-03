@@ -4,6 +4,7 @@ import 'package:food_app/core/app_theme.dart';
 import 'package:food_app/core/design/app_spacing.dart';
 import 'package:food_app/core/di/app_services.dart';
 import 'package:food_app/data/models/app_user.dart';
+import 'package:food_app/feaetures/address_form_screen.dart';
 import 'package:food_app/feaetures/location_picker_screen.dart';
 import 'package:food_app/provider/auth_provider.dart';
 import 'package:food_app/provider/location_provider.dart';
@@ -46,7 +47,7 @@ class _AddressesScreenState extends State<AddressesScreen> {
       await context.read<LocationProvider>().saveLocation(
             def!.latitude!,
             def.longitude!,
-            def.addressLine,
+            def.displayLine,
           );
     }
     await _load();
@@ -93,13 +94,27 @@ class _AddressesScreenState extends State<AddressesScreen> {
                     return Card(
                       child: ListTile(
                         title: Text(address.label, style: context.headingSmall),
-                        subtitle: Text(address.addressLine, style: context.bodyMedium),
+                        subtitle: Text(address.displayLine, style: context.bodyMedium),
                         trailing: PopupMenuButton<String>(
-                          onSelected: (value) {
+                          onSelected: (value) async {
+                            if (value == 'edit') {
+                              await Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (_) => AddressFormScreen(existing: address),
+                                ),
+                              );
+                              if (!context.mounted) return;
+                              await _load();
+                            }
                             if (value == 'default') _setDefault(address);
                             if (value == 'delete') _delete(address);
                           },
                           itemBuilder: (_) => [
+                            PopupMenuItem(
+                              value: 'edit',
+                              child: Text('addresses.edit'.tr()),
+                            ),
                             if (!address.isDefault)
                               PopupMenuItem(
                                 value: 'default',

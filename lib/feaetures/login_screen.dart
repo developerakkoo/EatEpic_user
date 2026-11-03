@@ -104,7 +104,7 @@ class _LoginScreenState extends State<LoginScreen> {
       await location.saveLocation(
         def!.latitude!,
         def.longitude!,
-        def.addressLine,
+        def.displayLine,
       );
     }
     if (!mounted) return;

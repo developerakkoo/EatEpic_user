@@ -7,6 +7,7 @@ import 'package:food_app/core/di/app_services.dart';
 import 'package:food_app/data/models/app_user.dart';
 import 'package:food_app/data/models/subscription_models.dart';
 import 'package:food_app/data/repositories/subscription_repository.dart';
+import 'package:food_app/feaetures/address_form_screen.dart';
 import 'package:food_app/feaetures/addresses_screen.dart';
 import 'package:food_app/provider/auth_provider.dart';
 import 'package:food_app/provider/subscription_provider.dart';
@@ -139,6 +140,22 @@ class _SubscriptionQuickCheckoutSheetState extends State<SubscriptionQuickChecko
         SnackBar(content: Text('sub.selectAddress'.tr())),
       );
       return;
+    }
+
+    final selectedAddress = _addresses.cast<UserAddress?>().firstWhere(
+      (address) => address?.id == _addressId,
+      orElse: () => null,
+    );
+    if (selectedAddress != null && !selectedAddress.isComplete) {
+      final completed = await promptCompleteAddress(context, selectedAddress);
+      if (!mounted) return;
+      if (completed == null) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('addresses.completeRequired'.tr())),
+        );
+        return;
+      }
+      setState(() => _addressId = completed.id);
     }
 
     if (_payment == 'WALLET') {
@@ -353,7 +370,15 @@ class _SubscriptionQuickCheckoutSheetState extends State<SubscriptionQuickChecko
           DropdownButtonFormField<String>(
             value: _addressId,
             items: _addresses
-                .map((a) => DropdownMenuItem(value: a.id, child: Text(a.label)))
+                .map(
+                  (a) => DropdownMenuItem(
+                    value: a.id,
+                    child: Text(
+                      '${a.label} · ${a.displayLine}',
+                      overflow: TextOverflow.ellipsis,
+                    ),
+                  ),
+                )
                 .toList(),
             onChanged: (v) => setState(() => _addressId = v),
             decoration: const InputDecoration(border: OutlineInputBorder()),

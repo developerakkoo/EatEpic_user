@@ -24,7 +24,21 @@
     "title": "Saved addresses",
     "empty": "No saved addresses",
     "setDefault": "Set as default",
-    "delete": "Delete"
+    "delete": "Delete",
+    "edit": "Edit",
+    "editTitle": "Edit address",
+    "addTitle": "Add address",
+    "label": "Save as",
+    "home": "Home",
+    "office": "Office",
+    "flatNo": "Flat no",
+    "floor": "Floor",
+    "areaName": "Area name",
+    "address": "Address",
+    "pincode": "Pincode",
+    "required": "This field is required",
+    "pincodeInvalid": "Enter a 6-digit pincode",
+    "completeRequired": "Complete the address before continuing"
   },
   "notifications": {
     "title": "Notifications",

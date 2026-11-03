@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:food_app/core/app_theme.dart';
 import 'package:food_app/core/design/app_spacing.dart';
 import 'package:food_app/core/di/app_services.dart';
+import 'package:food_app/feaetures/address_form_screen.dart';
 import 'package:food_app/feaetures/location_picker_screen.dart';
 import 'package:food_app/feaetures/order_tracking_screen.dart';
 import 'package:food_app/modal/cart_item_modal.dart';
@@ -535,10 +536,23 @@ class _CartScreenState extends State<CartScreen> {
         }
         return;
       }
-      final addr = addresses.firstWhere(
+      var addr = addresses.firstWhere(
         (a) => a.isDefault,
         orElse: () => addresses.first,
       );
+
+      if (!addr.isComplete) {
+        if (!context.mounted) return;
+        final completed = await promptCompleteAddress(context, addr);
+        if (!context.mounted) return;
+        if (completed == null) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(content: Text('addresses.completeRequired'.tr())),
+          );
+          return;
+        }
+        addr = completed;
+      }
 
       if (!_isValidObjectId(addr.id)) {
         if (!context.mounted) return;

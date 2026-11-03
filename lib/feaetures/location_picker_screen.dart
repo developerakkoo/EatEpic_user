@@ -3,10 +3,9 @@ import 'dart:io' show Platform;
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:food_app/core/app_theme.dart';
+import 'package:food_app/feaetures/address_form_screen.dart';
 import 'package:food_app/core/config/api_keys.dart';
 import 'package:food_app/core/design/app_spacing.dart';
-import 'package:food_app/core/di/app_services.dart';
-import 'package:food_app/provider/auth_provider.dart';
 import 'package:food_app/provider/location_provider.dart';
 import 'package:map_location_picker/map_location_picker.dart';
 import 'package:provider/provider.dart';
@@ -53,7 +52,7 @@ class _LocationPickerScreenState extends State<LocationPickerScreen> {
       initialPosition = const LatLng(28.8993468, 76.6250249);
     }
 
-    var didConfirmLocation = false;
+    GeocodingResult? picked;
 
     await Navigator.push(
       context,
@@ -68,29 +67,7 @@ class _LocationPickerScreenState extends State<LocationPickerScreen> {
             geocodingApiHeaders: geoCodingApiHeaders,
             initialPosition: initialPosition,
             onNext: (GeocodingResult? result) {
-              if (result != null) {
-                didConfirmLocation = true;
-                final lat = result.geometry?.location.lat ?? 0.0;
-                final lng = result.geometry?.location.lng ?? 0.0;
-                final address = result.formattedAddress ??
-                    'locationPicker.addressNotAvailable'.tr();
-
-                debugPrint('Location picked: lat=$lat, lng=$lng');
-                debugPrint('Address: $address');
-
-                locationProvider.saveLocation(lat, lng, address);
-                setState(() => _lastPosition = LatLng(lat, lng));
-                final auth = context.read<AuthProvider>();
-                if (auth.isLoggedIn) {
-                  AppServices.instance.userRepository.addAddress({
-                    'label': 'Home',
-                    'fullAddress': address,
-                    'latitude': lat,
-                    'longitude': lng,
-                    'isDefault': true,
-                  }).then((_) => auth.refreshProfile()).ignore();
-                }
-              }
+              picked = result;
               if (context.mounted) {
                 Navigator.pop(context, result);
               }
@@ -100,12 +77,30 @@ class _LocationPickerScreenState extends State<LocationPickerScreen> {
       ),
     );
 
-    if (mounted && didConfirmLocation) {
-      if (widget.fromCart || widget.fromHome) {
-        Navigator.pop(context);
-      } else {
-        Navigator.pushReplacementNamed(context, '/home');
-      }
+    if (!mounted || picked == null) return;
+
+    final lat = picked!.geometry?.location.lat ?? 0.0;
+    final lng = picked!.geometry?.location.lng ?? 0.0;
+    final address = picked!.formattedAddress ?? '';
+    setState(() => _lastPosition = LatLng(lat, lng));
+
+    final saved = await Navigator.push<Object?>(
+      context,
+      MaterialPageRoute(
+        builder: (_) => AddressFormScreen(
+          latitude: lat,
+          longitude: lng,
+          initialStreet: address,
+          makeDefault: true,
+        ),
+      ),
+    );
+
+    if (!mounted || saved == null) return;
+    if (widget.fromCart || widget.fromHome) {
+      Navigator.pop(context);
+    } else {
+      Navigator.pushReplacementNamed(context, '/home');
     }
   }
 

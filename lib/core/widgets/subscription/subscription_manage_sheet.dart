@@ -8,6 +8,7 @@ import 'package:food_app/core/widgets/subscription/subscription_confirm_dialogs.
 import 'package:food_app/core/widgets/subscription/subscription_stats_row.dart';
 import 'package:food_app/core/widgets/subscription/subscription_status_labels.dart';
 import 'package:food_app/data/models/app_user.dart';
+import 'package:food_app/feaetures/address_form_screen.dart';
 import 'package:food_app/data/models/subscription_models.dart';
 import 'package:food_app/provider/subscription_provider.dart';
 import 'package:provider/provider.dart';
@@ -176,7 +177,7 @@ class _SubscriptionManageSheetState extends State<SubscriptionManageSheet> {
               .map(
                 (a) => ListTile(
                   title: Text(a.label),
-                  subtitle: Text(a.addressLine, maxLines: 2),
+                  subtitle: Text(a.displayLine, maxLines: 2),
                   onTap: () => Navigator.pop(ctx, a),
                 ),
               )
@@ -184,9 +185,23 @@ class _SubscriptionManageSheetState extends State<SubscriptionManageSheet> {
         ),
       ),
     );
-    if (picked == null) return;
+    if (picked == null || !mounted) return;
+    var address = picked;
+    if (!address.isComplete) {
+      final completed = await promptCompleteAddress(context, address);
+      if (!mounted || completed == null) {
+        if (mounted && completed == null) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(content: Text('addresses.completeRequired'.tr())),
+          );
+        }
+        return;
+      }
+      address = completed;
+      await _load();
+    }
     try {
-      await _repo.updateAddress(widget.subscription.id, picked.id);
+      await _repo.updateAddress(widget.subscription.id, address.id);
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('sub.addressUpdated'.tr())));
       }

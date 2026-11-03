@@ -58,7 +58,7 @@ class _SplashScreenState extends State<SplashScreen> {
         await location.saveLocation(
           def!.latitude!,
           def.longitude!,
-          def.addressLine,
+          def.displayLine,
         );
       }
       if (!mounted) return;

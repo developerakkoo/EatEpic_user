@@ -42,6 +42,10 @@ class UserAddress {
   final String id;
   final String label;
   final String addressLine;
+  final String flatNo;
+  final String floor;
+  final String areaName;
+  final String pincode;
   final double? latitude;
   final double? longitude;
   final bool isDefault;
@@ -50,10 +54,35 @@ class UserAddress {
     required this.id,
     required this.label,
     required this.addressLine,
+    this.flatNo = '',
+    this.floor = '',
+    this.areaName = '',
+    this.pincode = '',
     this.latitude,
     this.longitude,
     this.isDefault = false,
   });
+
+  bool get isComplete =>
+      flatNo.trim().isNotEmpty &&
+      floor.trim().isNotEmpty &&
+      areaName.trim().isNotEmpty &&
+      addressLine.trim().isNotEmpty &&
+      RegExp(r'^\d{6}$').hasMatch(pincode.trim());
+
+  String get displayLine {
+    final street = addressLine.trim();
+    final flat = flatNo.trim();
+    if (flat.isNotEmpty && street.startsWith('Flat $flat')) return street;
+    final parts = <String>[
+      if (flat.isNotEmpty) 'Flat $flat',
+      if (floor.trim().isNotEmpty) 'Floor ${floor.trim()}',
+      if (street.isNotEmpty) street,
+      if (areaName.trim().isNotEmpty) areaName.trim(),
+      if (pincode.trim().isNotEmpty) pincode.trim(),
+    ];
+    return parts.join(', ');
+  }
 
   factory UserAddress.fromJson(Map<String, dynamic> json) {
     return UserAddress(
@@ -63,6 +92,10 @@ class UserAddress {
           json['addressLine']?.toString() ??
           json['address']?.toString() ??
           '',
+      flatNo: json['flatNo']?.toString() ?? '',
+      floor: json['floor']?.toString() ?? '',
+      areaName: json['areaName']?.toString() ?? '',
+      pincode: json['pincode']?.toString() ?? '',
       latitude: (json['latitude'] as num?)?.toDouble(),
       longitude: (json['longitude'] as num?)?.toDouble(),
       isDefault: json['isDefault'] == true,

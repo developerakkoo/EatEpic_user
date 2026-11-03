@@ -38,14 +38,33 @@ class UserRepository {
 
   Future<UserAddress> addAddress(Map<String, dynamic> body) async {
     final response = await _api.dio.post('/api/user/add-address', data: body);
-    final data = response.data['data'] ?? response.data['address'] ?? response.data;
-    return UserAddress.fromJson(data as Map<String, dynamic>);
+    return _addressFromResponse(response.data, preferLast: true);
   }
 
   Future<UserAddress> updateAddress(String addressId, Map<String, dynamic> body) async {
     final response = await _api.dio.put('/api/user/address/$addressId', data: body);
-    final data = response.data['data'] ?? response.data['address'] ?? response.data;
-    return UserAddress.fromJson(data as Map<String, dynamic>);
+    return _addressFromResponse(response.data, preferId: addressId);
+  }
+
+  UserAddress _addressFromResponse(
+    dynamic payload, {
+    bool preferLast = false,
+    String? preferId,
+  }) {
+    final data = payload is Map ? payload['data'] ?? payload['address'] ?? payload : payload;
+    if (data is List) {
+      final maps = data.whereType<Map>().map((row) => Map<String, dynamic>.from(row)).toList();
+      if (maps.isEmpty) {
+        throw StateError('Address response was empty');
+      }
+      if (preferId != null) {
+        for (final row in maps) {
+          if (row['_id']?.toString() == preferId) return UserAddress.fromJson(row);
+        }
+      }
+      return UserAddress.fromJson(preferLast ? maps.last : maps.first);
+    }
+    return UserAddress.fromJson(Map<String, dynamic>.from(data as Map));
   }
 
   Future<void> deleteAddress(String addressId) async {
